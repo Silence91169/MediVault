@@ -13,10 +13,13 @@ class LoginPage {
 
   async signup({ name, email, password, role = "patient" }) {
     await this.gotoSignup();
+    // Role is chosen via card buttons (Patient is default; only click if switching to Doctor)
+    if (role === "doctor") {
+      await this.page.getByRole("button", { name: /Doctor/ }).click();
+    }
     await this.page.fill("#name", name);
     await this.page.fill("#email", email);
     await this.page.fill("#password", password);
-    await this.page.selectOption("#role", role);
     await this.page.getByRole("button", { name: "Create Account" }).click();
   }
 

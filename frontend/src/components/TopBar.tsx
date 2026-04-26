@@ -17,7 +17,7 @@ export default function TopBar({ title, subtitle, onMenuToggle }: TopBarProps) {
           <Menu size={18} />
         </button>
         <div>
-          <div className="topbar-title">{title}</div>
+          <h1 className="topbar-title">{title}</h1>
           {subtitle && <div className="topbar-subtitle">{subtitle}</div>}
         </div>
       </div>
