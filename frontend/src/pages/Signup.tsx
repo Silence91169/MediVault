@@ -135,17 +135,17 @@ export default function Signup() {
         <form onSubmit={handleSignup}>
           <div style={{ marginBottom: 16 }}>
             <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#374151', marginBottom: 6 }}>Full name</label>
-            <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Jane Doe" required style={fieldStyle} onFocus={handleFocus} onBlur={handleBlur} />
+            <input id="name" type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Jane Doe" required style={fieldStyle} onFocus={handleFocus} onBlur={handleBlur} />
           </div>
 
           <div style={{ marginBottom: 16 }}>
             <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#374151', marginBottom: 6 }}>Email</label>
-            <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com" required style={fieldStyle} onFocus={handleFocus} onBlur={handleBlur} />
+            <input id="email" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com" required style={fieldStyle} onFocus={handleFocus} onBlur={handleBlur} />
           </div>
 
           <div style={{ marginBottom: 24 }}>
             <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#374151', marginBottom: 6 }}>Password</label>
-            <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" required style={fieldStyle} onFocus={handleFocus} onBlur={handleBlur} />
+            <input id="password" type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" required style={fieldStyle} onFocus={handleFocus} onBlur={handleBlur} />
           </div>
 
           <button
