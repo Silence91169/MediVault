@@ -4,8 +4,7 @@ import AppShell from '../components/AppShell';
 import EmergencyProfileForm from '../components/EmergencyProfileForm';
 import EmergencyQRCodeCard from '../components/EmergencyQRCodeCard';
 import type { EmergencyPrivateData, EmergencyProfileData, User } from '../types';
-
-const API_BASE = import.meta.env.VITE_API_URL;
+import { API_BASE } from '../config/api';
 
 const EMPTY_PROFILE: EmergencyProfileData = {
   fullName: '',
