@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AppShell from '../components/AppShell';
 import type { User, MedicalDocument, ShareDocument } from '../types';
+import { API_URL } from '../config/api';
 
 export default function Documents() {
   const [user, setUser] = useState<User | null>(null);
@@ -16,25 +17,25 @@ export default function Documents() {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const profileRes = await fetch(import.meta.env.VITE_API_URL + '/api/user/profile', {
+      const profileRes = await fetch(`${API_URL}/api/user/profile`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      const profileData = await profileRes.json();
+      const profileData = await profileRes.json().catch(() => ({}));
       if (!profileRes.ok) throw new Error(profileData.message || 'Failed to load profile');
       const userData: User = profileData.user || profileData.data || profileData;
       setUser(userData);
 
       if (userData.role === 'doctor') {
-        const docsRes = await fetch(import.meta.env.VITE_API_URL + '/api/documents/doctor/shared-documents', {
+        const docsRes = await fetch(`${API_URL}/api/documents/doctor/shared-documents`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        const docsData = await docsRes.json();
+        const docsData = await docsRes.json().catch(() => ({}));
         if (docsRes.ok) setSharedDocs(docsData.data || []);
       } else {
-        const myRes = await fetch(import.meta.env.VITE_API_URL + '/api/documents/patient/my-documents', {
+        const myRes = await fetch(`${API_URL}/api/documents/patient/my-documents`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        const myData = await myRes.json();
+        const myData = await myRes.json().catch(() => ({}));
         if (myRes.ok) setMyDocs(myData.data || []);
       }
     } catch (err) {
@@ -59,7 +60,7 @@ export default function Documents() {
 
   const viewDoctorDoc = async (shareId: string, fileUrl: string) => {
     try {
-      await fetch(`${import.meta.env.VITE_API_URL}/api/documents/doctor/view/${shareId}`, {
+      await fetch(`${API_URL}/api/documents/doctor/view/${shareId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       window.open(fileUrl, '_blank', 'noopener,noreferrer');

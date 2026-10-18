@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AppShell from '../components/AppShell';
 import type { User, Doctor } from '../types';
+import { API_URL } from '../config/api';
 
 export default function UploadDocument() {
   const [user, setUser] = useState<User | null>(null);
@@ -24,19 +25,19 @@ export default function UploadDocument() {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const profileRes = await fetch(import.meta.env.VITE_API_URL + '/api/user/profile', {
+      const profileRes = await fetch(`${API_URL}/api/user/profile`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      const profileData = await profileRes.json();
+      const profileData = await profileRes.json().catch(() => ({}));
       if (!profileRes.ok) throw new Error(profileData.message || 'Failed to load profile');
       const userData: User = profileData.user || profileData.data || profileData;
       setUser(userData);
 
       if (userData.role !== 'doctor') {
-        const docRes = await fetch(import.meta.env.VITE_API_URL + '/api/user/doctors', {
+        const docRes = await fetch(`${API_URL}/api/user/doctors`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        const docData = await docRes.json();
+        const docData = await docRes.json().catch(() => ({}));
         if (docRes.ok) {
           setDoctors(Array.isArray(docData) ? docData : docData.data || []);
         }
@@ -92,12 +93,12 @@ export default function UploadDocument() {
     }
 
     try {
-      const res = await fetch(import.meta.env.VITE_API_URL + '/api/documents/upload-and-share', {
+      const res = await fetch(`${API_URL}/api/documents/upload-and-share`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
         body: formData,
       });
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.message || 'Upload failed');
       navigate('/documents');
     } catch (err) {

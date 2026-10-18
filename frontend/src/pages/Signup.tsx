@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { User, Stethoscope } from 'lucide-react';
+import { API_URL } from '../config/api';
 
 export default function Signup() {
   const [name, setName] = useState('');
@@ -16,12 +17,12 @@ export default function Signup() {
     setError('');
     setLoading(true);
     try {
-      const res = await fetch(import.meta.env.VITE_API_URL + '/api/auth/signup', {
+      const res = await fetch(`${API_URL}/api/auth/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password, role }),
       });
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.message || 'Signup failed');
       navigate('/login');
     } catch (err) {

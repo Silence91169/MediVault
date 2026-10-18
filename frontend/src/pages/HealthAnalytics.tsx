@@ -14,8 +14,7 @@ import type {
   VitalLog,
   VitalsFormValues,
 } from '../types';
-
-const API_BASE = import.meta.env.VITE_API_URL;
+import { API_BASE } from '../config/api';
 
 function todayIsoDate() {
   return new Date().toISOString().split('T')[0];

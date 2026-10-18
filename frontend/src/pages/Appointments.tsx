@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AppShell from '../components/AppShell';
 import type { User, Appointment, Doctor } from '../types';
+import { API_URL } from '../config/api';
 
 function statusBadge(status: string) {
   const map: Record<string, string> = {
@@ -39,32 +40,32 @@ export default function Appointments() {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const profileRes = await fetch(import.meta.env.VITE_API_URL + '/api/user/profile', {
+        const profileRes = await fetch(`${API_URL}/api/user/profile`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        const profileData = await profileRes.json();
+        const profileData = await profileRes.json().catch(() => ({}));
         if (!profileRes.ok) throw new Error(profileData.message || 'Failed to load profile');
         const userData: User = profileData.user || profileData.data || profileData;
         setUser(userData);
 
         const endpoint =
           userData.role === 'doctor'
-            ? import.meta.env.VITE_API_URL + '/api/appointments/doctor'
-            : import.meta.env.VITE_API_URL + '/api/appointments/patient';
+            ? `${API_URL}/api/appointments/doctor`
+            : `${API_URL}/api/appointments/patient`;
 
         const aptRes = await fetch(endpoint, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        const aptData = await aptRes.json();
+        const aptData = await aptRes.json().catch(() => ({}));
         if (aptRes.ok) {
           setAppointments(aptData.data || []);
         }
 
         if (userData.role !== 'doctor') {
-          const docRes = await fetch(import.meta.env.VITE_API_URL + '/api/user/doctors', {
+          const docRes = await fetch(`${API_URL}/api/user/doctors`, {
             headers: { Authorization: `Bearer ${token}` },
           });
-          const docData = await docRes.json();
+          const docData = await docRes.json().catch(() => ({}));
           if (docRes.ok) {
             setDoctors(Array.isArray(docData) ? docData : docData.data || []);
           }
@@ -89,12 +90,12 @@ export default function Appointments() {
     try {
       const endpoint =
         user.role === 'doctor'
-          ? import.meta.env.VITE_API_URL + '/api/appointments/doctor'
-          : import.meta.env.VITE_API_URL + '/api/appointments/patient';
+          ? `${API_URL}/api/appointments/doctor`
+          : `${API_URL}/api/appointments/patient`;
       const aptRes = await fetch(endpoint, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      const aptData = await aptRes.json();
+      const aptData = await aptRes.json().catch(() => ({}));
       if (aptRes.ok) setAppointments(aptData.data || []);
     } catch (err) {
       console.error('Failed to refresh appointments', err);
@@ -108,12 +109,12 @@ export default function Appointments() {
     }
     setBooking(true);
     try {
-      const res = await fetch(import.meta.env.VITE_API_URL + '/api/appointments', {
+      const res = await fetch(`${API_URL}/api/appointments`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ doctorId, date, time, reason }),
       });
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.message || 'Failed to book appointment');
       setDoctorId('');
       setDate('');
@@ -135,12 +136,12 @@ export default function Appointments() {
       notes = input;
     }
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/appointments/${id}/${action}`, {
+      const res = await fetch(`${API_URL}/api/appointments/${id}/${action}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ notes: notes || '' }),
       });
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.message || `Failed to ${action} appointment`);
       refreshAppointments();
     } catch (err) {
@@ -151,11 +152,11 @@ export default function Appointments() {
   const cancelAppointment = async (id: string) => {
     if (!window.confirm('Are you sure you want to cancel this appointment?')) return;
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/appointments/${id}`, {
+      const res = await fetch(`${API_URL}/api/appointments/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       });
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.message || 'Failed to cancel appointment');
       refreshAppointments();
     } catch (err) {

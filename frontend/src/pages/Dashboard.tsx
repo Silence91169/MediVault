@@ -9,6 +9,7 @@ import LoadingSkeleton from '../components/ui/LoadingSkeleton';
 import EmptyState from '../components/ui/EmptyState';
 import Badge from '../components/ui/Badge';
 import type { User, MedicalRecord } from '../types';
+import { API_URL } from '../config/api';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -147,27 +148,27 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const profileRes = await fetch(import.meta.env.VITE_API_URL + '/api/user/profile', {
+        const profileRes = await fetch(`${API_URL}/api/user/profile`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        const profileData = await profileRes.json();
+        const profileData = await profileRes.json().catch(() => ({}));
         if (!profileRes.ok) throw new Error(profileData.message || 'Failed to load profile');
         const userData: User = profileData.user || profileData.data || profileData;
         setUser(userData);
 
-        const recordsRes = await fetch(import.meta.env.VITE_API_URL + '/api/records', {
+        const recordsRes = await fetch(`${API_URL}/api/records`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        const recordsData = await recordsRes.json();
+        const recordsData = await recordsRes.json().catch(() => ({}));
         if (recordsRes.ok) setRecords(recordsData.data || recordsData);
 
         // Fetch emergency profile for patient
         if (userData.role !== 'doctor') {
-          const emergRes = await fetch(import.meta.env.VITE_API_URL + '/api/emergency/me', {
+          const emergRes = await fetch(`${API_URL}/api/emergency/me`, {
             headers: { Authorization: `Bearer ${token}` },
           });
           if (emergRes.ok) {
-            const emergData = await emergRes.json();
+            const emergData = await emergRes.json().catch(() => ({}));
             setEmergency(emergData.data || emergData);
           }
         }
